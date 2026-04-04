@@ -2,7 +2,7 @@ import cv2
 import csv 
 import glob 
 import numpy 
-import math 
+import math
 from basic_image_processor.components.image_converter.grayscale_conversion import GrayscaleConversion
 from basic_image_processor.components.threshold import AdaptiveGaussThreshold 
 from basic_image_processor.components.morphological_transformers import Erosion  
@@ -18,11 +18,11 @@ class DatasetHuMomentsHandler:
     # Logica para manejar la generacion de momento de hu 
 
     # Se encarga de escribir los momentos de hu, en el archivo 
-    def writer_hu_moments(self, label, writer):
+    def write_hu_moments(self, label, writer):
         files = glob.glob('./shapes/' + label + '/*')  # label recibe el nombre de la carpeta
         hu_moments = []
         for file in files: 
-            hu_moments.append(hu_moments_of_file(file))
+            hu_moments.append(self.hu_moments_of_file(file))
 
         for moments in hu_moments:
             flattened = moments.ravel()  # paso de un array de arrays a un array simple.
@@ -30,16 +30,15 @@ class DatasetHuMomentsHandler:
             writer.writerow(row)  # Escribe una linea en el archivo.
             
     def generate_hu_moments_file(self):
-        with open('generated-files/shapes-hu-moments.csv', 'w', newline='') 
-            as file:  # Se genera un archivo nuevo (W=Write)
+        with open('generated-files/shapes-hu-moments.csv', 'w', newline='') as file:  # Se genera un archivo nuevo (W=Write)
         
         writer = csv.writer(file)
         
         # Ahora escribo los momentos de Hu de cada uno de las figuras. Con el string "rectangle...etc" busca en la carpeta donde estan cada una de las imagenes
         # generar los momentos de Hu y los escribe sobre este archivo. (LOS DE ENTRENAMIENTO).
-        write_hu_moments("5-point-star", writer)
-        write_hu_moments("rectangle", writer)
-        write_hu_moments("triangle", writer)
+        self.write_hu_moments("5-point-star", writer)
+        self.write_hu_moments("rectangle", writer)
+        self.write_hu_moments("triangle", writer)
 
     # Encargada de generar los momentos de Hu para las imagenes
     def hu_moments_of_file(self, filename):
