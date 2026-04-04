@@ -10,29 +10,31 @@ from basic_image_processor.components.morphological_transformers import Erosion
 
 class DatasetHuMomentsHandler:
     
-    def __init__(label, writer):
-        self.label  = label,
+    def __init__(self, label, writer):
+        self.label  = label
         self.writer = writer
 
 
     # Logica para manejar la generacion de momento de hu 
 
     # Se encarga de escribir los momentos de hu, en el archivo 
-    def writer_hu_moments(label, writer):
+    def writer_hu_moments(self, label, writer):
         files = glob.glob('./shapes/' + label + '/*')  # label recibe el nombre de la carpeta
         hu_moments = []
         for file in files: 
-            hu_moments.append(hu_moments_on_file(file))
+            hu_moments.append(hu_moments_of_file(file))
 
         for moments in hu_moments:
-            flattened = mom.ravel()  # paso de un array de arrays a un array simple.
+            flattened = moments.ravel()  # paso de un array de arrays a un array simple.
             row = numpy.append(flattened, label)  # le metes el flattened array y le agregas el label
             writer.writerow(row)  # Escribe una linea en el archivo.
             
-    def generate_hu_moments_file():
-        with open('generated-files/shapes-hu-moments.csv', 'w', newline='') as file:  # Se genera un archivo nuevo (W=Write)
+    def generate_hu_moments_file(self):
+        with open('generated-files/shapes-hu-moments.csv', 'w', newline='') 
+            as file:  # Se genera un archivo nuevo (W=Write)
         
         writer = csv.writer(file)
+        
         # Ahora escribo los momentos de Hu de cada uno de las figuras. Con el string "rectangle...etc" busca en la carpeta donde estan cada una de las imagenes
         # generar los momentos de Hu y los escribe sobre este archivo. (LOS DE ENTRENAMIENTO).
         write_hu_moments("5-point-star", writer)
@@ -40,7 +42,7 @@ class DatasetHuMomentsHandler:
         write_hu_moments("triangle", writer)
 
     # Encargada de generar los momentos de Hu para las imagenes
-    def hu_moments_of_file(filename):
+    def hu_moments_of_file(self, filename):
         image = cv2.imread(filename)
         gray = GrayscaleConversion.apply(image)
         bin = AdaptiveGaussThreshold(gray);
@@ -69,6 +71,7 @@ class DatasetHuMomentsHandler:
         # Log scale hu moments
         for i in range(0, 7):
             huMoments[i] = -1 * math.copysign(1.0, huMoments[i]) * math.log10(abs(huMoments[i])) # Mapeo para agrandar la escala.
+        
         return huMoments
 
 
