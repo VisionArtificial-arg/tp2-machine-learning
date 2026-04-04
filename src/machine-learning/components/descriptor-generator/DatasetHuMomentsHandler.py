@@ -3,7 +3,10 @@ import csv
 import glob 
 import numpy 
 import math 
-import grayscale_conversion from basic-image-processor
+from basic_image_processor.components.image_converter.grayscale_conversion import GrayscaleConversion
+from basic_image_processor.components.threshold import AdaptiveGaussThreshold 
+from basic_image_processor.components.morphological_transformers import Erosion  
+
 
 class DatasetHuMomentsHandler:
     
@@ -38,16 +41,18 @@ class DatasetHuMomentsHandler:
 
     # Encargada de generar los momentos de Hu para las imagenes
     def hu_moments_of_file(filename):
-        # todo: Aca, deberia usar los metodos que definimos en nuestro basic-image-processor
         image = cv2.imread(filename)
-        gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        bin = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 67, 2)
+        gray = GrayscaleConversion.apply(image)
+        bin = AdaptiveGaussThreshold(gray);
 
         # Invert the image so the area of the UAV is filled with 1's. This is necessary since
         # cv::findContours describes the boundary of areas consisting of 1's.
         bin = 255 - bin # como sabemos que las figuras son negras invertimos los valores binarios para que esten en 1.
 
         kernel = numpy.ones((3, 3), numpy.uint8)  # Tamaño del bloque a recorrer
+
+        # erosion 
+        bin = Erosion.apply(); 
         # buscamos eliminar falsos positivos (puntos blancos en el fondo) para eliminar ruido.
         bin = cv2.morphologyEx(bin, cv2.MORPH_ERODE, kernel)
 
