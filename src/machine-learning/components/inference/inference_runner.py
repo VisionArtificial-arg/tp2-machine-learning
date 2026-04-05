@@ -1,0 +1,45 @@
+import cv2
+import numpy as np
+import glob
+from joblib import load
+
+from utils.hu_moments_generation import hu_moments_of_file
+from utils.label_converters import int_to_label
+
+
+class InferenceRunner:
+    def __init__(self, model_path, testing_images_path):
+        self.model = load(model_path)
+        self.testing_images_path = testing_images_path
+
+    def run(self):
+        files = glob.glob(f"{self.testing_images_path}/*")
+
+        for f in files:
+            hu = hu_moments_of_file(f) # generates descriptors from image
+
+            # sklearn expect shape = (1, 7)
+            sample = np.array([hu.flatten()], dtype=np.float32)
+
+            prediction = self.model.predict(sample)[0] # prediction
+
+            # read image + draw prediction
+            image = cv2.imread(f)
+            label = int_to_label(prediction)
+
+            annotated = cv2.putText(
+                image,
+                label,
+                (30, 50),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 0, 0),
+                2,
+                cv2.LINE_AA
+            )
+
+            cv2.imshow("Result", annotated)
+            print(f"Image: {f} -> Prediction: {label}")
+            cv2.waitKey(0)
+
+        cv2.destroyAllWindows()
