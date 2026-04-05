@@ -1,4 +1,4 @@
-from .trainer import DecisionTreeTrainer
+from components.training.trainer import DecisionTreeTrainer
 
 def main():
     trainer = DecisionTreeTrainer(

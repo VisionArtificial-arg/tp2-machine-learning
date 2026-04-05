@@ -3,6 +3,7 @@ import glob
 import numpy as np
 from utils.hu_moments_generation import hu_moments_of_file
 
+
 class DatasetHuMomentsHandler:
     def __init__(
         self,
@@ -31,7 +32,7 @@ class DatasetHuMomentsHandler:
 
 
     def generate_hu_moments_file(self):
-        with open('generated_files/shapes-hu-moments.csv', 'w', newline='') as file:  # generate a new file (W=Write)
+        with open('../generated_files/shapes-hu-moments.csv', 'w', newline='') as file:  # generate a new file (W=Write)
             writer = csv.writer(file)
             self.write_hu_moments("5-point-star", writer)
             self.write_hu_moments("rectangle", writer)

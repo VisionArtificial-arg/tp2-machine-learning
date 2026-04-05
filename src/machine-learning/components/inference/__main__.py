@@ -1,4 +1,4 @@
-from .inference_runner import InferenceRunner
+from components.inference.inference_runner import InferenceRunner
 
 
 def main():
