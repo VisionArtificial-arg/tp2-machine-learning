@@ -4,12 +4,15 @@ from sklearn import tree
 from joblib import dump
 
 from utils.label_converters import label_to_int
+from utils.path_helper import project_root
 
 
 class DecisionTreeTrainer:
     def __init__(self, dataset_path: str, model_output_path: str):
-        self.dataset_path = dataset_path
-        self.model_output_path = model_output_path
+        root = project_root()
+        self.dataset_path = root / dataset_path
+        self.model_output_path = root / model_output_path
+
 
     def load_dataset(self):
         X = []
@@ -28,6 +31,10 @@ class DecisionTreeTrainer:
     # Training
     def train(self):
         X, Y = self.load_dataset()
+
+        print("DEBUG X shape:", X.shape)
+        print("DEBUG Y shape:", Y.shape)
+        print("dataset_path =", self.dataset_path)
 
         model = tree.DecisionTreeClassifier(
             criterion="gini",

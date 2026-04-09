@@ -29,3 +29,20 @@ def hu_moments_of_file(filename: str):
         hu[i] = -1 * math.copysign(1.0, hu[i]) * math.log10(abs(hu[i]))
 
     return hu
+
+def hu_moments_of_frame(frame):
+    gray = GrayScaleConverter().apply(frame)
+    binary = AdaptiveGaussThreshold().apply(gray)
+    binary = 255 - binary
+    binary = Erosion().apply(binary)
+
+    # find contours
+    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    shape_contour = max(contours, key=cv2.contourArea)
+
+    # get moments
+    moments = cv2.moments(shape_contour)
+    hu = cv2.HuMoments(moments)
+
+    for i in range(7):
+        hu[i] = -1 * math.copysign(1.0, hu[i]) * math.log10(abs(hu[i]))

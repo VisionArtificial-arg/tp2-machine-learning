@@ -5,6 +5,8 @@ from basic_image_processor.components.morphological_transformers import Erosion
 from basic_image_processor.components.threshold import ManualThreshold, AdaptiveGaussThreshold, AutomaticThreshold
 
 
+# posible fixme: quiza, podes encararlo directamente con las image en lugar de manejar frames
+
 class ImageProcessingPipeline:
     def __init__(self):
         self.threshold_type = "adaptive"

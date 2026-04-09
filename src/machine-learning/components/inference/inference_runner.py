@@ -12,6 +12,7 @@ class InferenceRunner:
         self.model = load(model_path)
         self.testing_images_path = testing_images_path
 
+
     def run(self):
         files = glob.glob(f"{self.testing_images_path}/*")
 
@@ -43,3 +44,9 @@ class InferenceRunner:
             cv2.waitKey(0)
 
         cv2.destroyAllWindows()
+
+    def predict_from_frame(self, frame):
+        hu = hu_moments_of_frame(frame)
+        if hu is None:
+            return None
+        return self.predict_from_hu(hu)
