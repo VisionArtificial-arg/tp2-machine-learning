@@ -30,7 +30,11 @@ def main():
 
         processed = pipeline.process(frame)
 
-        label = runner.predict_from_frame(processed)
+        label = runner.predict_from_frame(frame)
+
+        print("Label:" , label)
+
+
         if label is not None:
             cv2.putText(frame, label, (20, 40),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)

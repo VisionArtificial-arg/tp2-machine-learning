@@ -1,16 +1,33 @@
+import os
+
 import cv2
 import numpy as np
 import glob
 from joblib import load
 
-from utils.hu_moments_generation import hu_moments_of_file
+from utils.hu_moments_generation import hu_moments_of_file, hu_moments_of_frame
 from utils.label_converters import int_to_label
+from utils.path_helper import project_root
 
 
 class InferenceRunner:
     def __init__(self, model_path, testing_images_path):
+        root = project_root()
+        model_path = os.path.join(root, model_path)
         self.model = load(model_path)
         self.testing_images_path = testing_images_path
+
+    def predict_from_hu(self, hu):
+        sample = np.array([hu.flatten()], dtype=np.float32)
+        prediction = self.model.predict(sample)[0]
+        return int_to_label(prediction)
+
+    def predict_from_frame(self, frame):
+        hu = hu_moments_of_frame(frame)
+        if hu is None:
+            return None  # si no encuentra contornos
+        return self.predict_from_hu(hu)
+
 
 
     def run(self):
@@ -45,8 +62,4 @@ class InferenceRunner:
 
         cv2.destroyAllWindows()
 
-    def predict_from_frame(self, frame):
-        hu = hu_moments_of_frame(frame)
-        if hu is None:
-            return None
-        return self.predict_from_hu(hu)
+
