@@ -10,9 +10,9 @@ def main():
     pipeline = ImageProcessingPipeline()
 
     cv2.namedWindow("Controls")
-    cv2.createTrackbar("Threshold", "Controls", 127, 255, lambda x: None)
-    cv2.createTrackbar("Kernel", "Controls", 3, 20, lambda x: None)
-    cv2.createTrackbar("Iterations", "Controls", 1, 10, lambda x: None)
+    # cv2.createTrackbar("Threshold", "Controls", 127, 255, lambda x: None)
+    cv2.createTrackbar("Kernel", "Controls", 1, 5, lambda x: None)
+    # cv2.createTrackbar("Iterations", "Controls", 1, 10, lambda x: None)
 
     cap = cv2.VideoCapture(0)
     runner = InferenceRunner(
