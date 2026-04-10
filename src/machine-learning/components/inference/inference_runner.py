@@ -5,7 +5,7 @@ import numpy as np
 import glob
 from joblib import load
 
-from utils.hu_moments_generation import hu_moments_of_file, hu_moments_of_frame
+from utils.hu_moments_generation import hu_moments_of_file, hu_moments_of_frame, contour_and_hu_moments_of_frame, contour_hu_pairs_of_frame
 from utils.label_converters import int_to_label
 from utils.path_helper import project_root
 
@@ -27,6 +27,19 @@ class InferenceRunner:
         if hu is None:
             return None  # si no encuentra contornos
         return self.predict_from_hu(hu)
+
+    def predict_with_contour_from_frame(self, frame):
+        contour, hu = contour_and_hu_moments_of_frame(frame)
+        if hu is None:
+            return None, None
+        return self.predict_from_hu(hu), contour
+
+    def predict_many_from_frame(self, frame, min_area=500):
+        predictions = []
+        for contour, hu in contour_hu_pairs_of_frame(frame, min_area=min_area):
+            label = self.predict_from_hu(hu)
+            predictions.append((label, contour))
+        return predictions
 
 
 

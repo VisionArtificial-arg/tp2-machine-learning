@@ -1,8 +1,8 @@
 import cv2
 
 from components.image_pipeline import ImageProcessingPipeline
+from components.inference.artist import InferenceArtist
 from components.inference.inference_runner import InferenceRunner
-from components.inference.stable_predictor import StablePredictor
 
 
 def main():
@@ -19,8 +19,7 @@ def main():
         model_path="generated_files/model.joblib",
         testing_images_path="./shapes/testing"
     )
-
-    stable = StablePredictor(window=12)
+    artist = InferenceArtist()
 
     while True:
         ret, frame = cap.read()
@@ -33,18 +32,12 @@ def main():
 
         processed = pipeline.process(frame)
 
-        # 🔥 Predicción cruda (puede variar mucho)
-        raw_label = runner.predict_from_frame(frame)
+        detections = runner.predict_many_from_frame(frame, min_area=700)
+        labels = [label for label, _ in detections]
+        print("Labels:", labels)
 
-        # 🔥 Predicción filtrada (estable)
-        label = stable.update(raw_label)
-
-        print("Label:" , label)
-
-
-        if label is not None:
-            cv2.putText(frame, label, (20, 40),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        for label, contour in detections:
+            frame = artist.draw(frame, contour, label)
 
 
         cv2.imshow("Camera", frame)
