@@ -2,6 +2,7 @@ import cv2
 
 from components.image_pipeline import ImageProcessingPipeline
 from components.inference.inference_runner import InferenceRunner
+from components.inference.stable_predictor import StablePredictor
 
 
 def main():
@@ -19,6 +20,8 @@ def main():
         testing_images_path="./shapes/testing"
     )
 
+    stable = StablePredictor(window=12)
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -30,7 +33,11 @@ def main():
 
         processed = pipeline.process(frame)
 
-        label = runner.predict_from_frame(frame)
+        # 🔥 Predicción cruda (puede variar mucho)
+        raw_label = runner.predict_from_frame(frame)
+
+        # 🔥 Predicción filtrada (estable)
+        label = stable.update(raw_label)
 
         print("Label:" , label)
 

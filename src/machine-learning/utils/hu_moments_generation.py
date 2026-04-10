@@ -6,63 +6,38 @@ from basic_image_processor.components.image_converter.grayscale_conversion impor
 from basic_image_processor.components.morphological_transformers import Erosion
 from basic_image_processor.components.threshold import AdaptiveGaussThreshold
 
-
-def hu_moments_of_file(filename: str):
-    image = cv2.imread(filename) # read image
-
-    gray = GrayScaleConverter().apply(image) # applies grayscale
-
-    binary = AdaptiveGaussThreshold().apply(gray) # apply adaptive threshold
-
-    binary = 255 - binary # invert values
-
-    # applies erosion
-    # Aclaracion a futuro: podemos redefinir Erosion de nuestro basic_image_processor
-    # esto para evitar tener que crear siempre el kernel, es decir, podemos setear valores por default en la creacion, y listo
+def compute_hu_moments(image):
+    gray = GrayScaleConverter().apply(image)
+    binary = AdaptiveGaussThreshold().apply(gray)
+    binary = 255 - binary
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     binary = Erosion().apply(binary, kernel=kernel, iterations=1)
 
-
-    # find contours
+    # contornos
     contours, _ = cv2.findContours(binary, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    shape_contour = max(contours, key=cv2.contourArea)
+    if len(contours) == 0:
+        return None
 
-    # get moments
-    moments = cv2.moments(shape_contour)
-    hu = cv2.HuMoments(moments)
+    contour = max(contours, key=cv2.contourArea)
 
+    # momentos
+    m = cv2.moments(contour)
+    hu = cv2.HuMoments(m)
+
+    # evitar log(0)
+    eps = 1e-12
     for i in range(7):
         v = hu[i][0]
-        hu[i][0] = -1 * math.copysign(1.0, v) * math.log10(abs(v))
+        if abs(v) < eps:
+            hu[i][0] = 0.0
+        else:
+            hu[i][0] = -1 * math.copysign(1.0, v) * math.log10(abs(v))
 
     return hu
 
-def hu_moments_of_frame(frame: Mat):
-    gray = GrayScaleConverter().apply(frame) # applies grayscale
+def hu_moments_of_file(filename):
+    return compute_hu_moments(cv2.imread(filename))
 
-    binary = AdaptiveGaussThreshold().apply(gray) # apply adaptive threshold
-
-    binary = 255 - binary # invert values
-
-    # applies erosion
-    # Aclaracion a futuro: podemos redefinir Erosion de nuestro basic_image_processor
-    # esto para evitar tener que crear siempre el kernel, es decir, podemos setear valores por default en la creacion, y listo
-
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    binary = Erosion().apply(binary, kernel=kernel, iterations=1)
-
-
-    # find contours
-    contours, _ = cv2.findContours(binary, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    shape_contour = max(contours, key=cv2.contourArea)
-
-    # get moments
-    moments = cv2.moments(shape_contour)
-    hu = cv2.HuMoments(moments)
-
-    for i in range(7):
-        v = hu[i][0]
-        hu[i][0] = -1 * math.copysign(1.0, v) * math.log10(abs(v))
-
-    return hu
+def hu_moments_of_frame(frame):
+    return compute_hu_moments(frame)

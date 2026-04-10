@@ -8,19 +8,11 @@ from utils.path_helper import project_root
 class DatasetHuMomentsHandler:
     def __init__(
         self,
-        # labels: list[str],
         shape_path: str,
         output_path: str,
-        # grayscale,
-        # threshold,
-        # erosion,
     ):
-        # self.labels = labels
         self.shape_path = shape_path
         self.output_path = output_path
-        # self.grayscale = grayscale
-        # self.threshold = threshold
-        # self.erosion = erosion
 
     def write_hu_moments(self, label, writer):
         root = project_root()
