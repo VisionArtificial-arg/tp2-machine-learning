@@ -47,9 +47,9 @@ class DatasetHuMomentsHandler:
         print("generate_path: ", generate_path)
         with open(generate_path, 'w', newline='') as file:  # generate a new file (W=Write)
             writer = csv.writer(file)
-            self.write_hu_moments("5-point-star", writer)
-            self.write_hu_moments("rectangle", writer)
-            self.write_hu_moments("triangle", writer)
+            self.write_hu_moments("diamond", writer)
+            self.write_hu_moments("trebol", writer)
+            self.write_hu_moments("heart", writer)
 
         # for label in self.labels:
         #     self.write_hu_moments(label, writer)

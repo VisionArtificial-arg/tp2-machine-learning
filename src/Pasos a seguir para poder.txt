@@ -1,0 +1,5 @@
+Pasos a seguir para poder ejecutar correctamente el proyecto:
+
+1. Correr el main del descriptor generator para poder cargar el csv de datos.
+2. Correr training
+3. correr inference
