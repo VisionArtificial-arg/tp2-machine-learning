@@ -19,14 +19,14 @@ class ImageProcessingPipeline:
         gray = GrayScaleConverter().apply(frame)
 
         # Selección dinámica de threshold
-        if self.threshold_type == "manual":
-            binary = ManualThreshold().apply(gray, self.manual_value, 255, cv2.THRESH_BINARY)
+        # if self.threshold_type == "manual":
+        binary = ManualThreshold().apply(gray, self.manual_value, 255, cv2.THRESH_BINARY)
 
-        elif self.threshold_type == "adaptive":
-            binary = AdaptiveGaussThreshold().apply(gray)
-
-        elif self.threshold_type == "otsu":
-            binary = AutomaticThreshold().apply(gray)
+        # elif self.threshold_type == "adaptive":
+        #     binary = AdaptiveGaussThreshold().apply(gray)
+        #
+        # elif self.threshold_type == "otsu":
+        #     binary = AutomaticThreshold().apply(gray)
 
         # Morph (ajustable)
         kernel = np.ones((self.kernel_size, self.kernel_size), np.uint8)
