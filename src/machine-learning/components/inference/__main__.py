@@ -32,7 +32,12 @@ def main():
 
         processed = pipeline.process(frame)
 
-        detections = runner.predict_many_from_frame(frame, min_area=700)
+        detections = runner.predict_many_from_frame(
+            frame,
+            min_area=700,
+            max_area_ratio=0.40,
+            ignore_border=True,
+        )
         labels = [label for label, _ in detections]
         print("Labels:", labels)
 

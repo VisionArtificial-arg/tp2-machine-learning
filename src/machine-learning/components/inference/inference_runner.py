@@ -34,9 +34,14 @@ class InferenceRunner:
             return None, None
         return self.predict_from_hu(hu), contour
 
-    def predict_many_from_frame(self, frame, min_area=500):
+    def predict_many_from_frame(self, frame, min_area=500, max_area_ratio=0.98, ignore_border=False):
         predictions = []
-        for contour, hu in contour_hu_pairs_of_frame(frame, min_area=min_area):
+        for contour, hu in contour_hu_pairs_of_frame(
+            frame,
+            min_area=min_area,
+            max_area_ratio=max_area_ratio,
+            ignore_border=ignore_border,
+        ):
             label = self.predict_from_hu(hu)
             predictions.append((label, contour))
         return predictions
