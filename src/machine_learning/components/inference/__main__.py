@@ -1,8 +1,8 @@
 import cv2
 
-from components.image_pipeline import ImageProcessingPipeline
-from components.inference.inference_runner import InferenceRunner
-from components.inference.stable_predictor import StablePredictor
+from src.machine_learning.components.image_pipeline import ImageProcessingPipeline
+from src.machine_learning.components.inference.inference_runner import InferenceRunner
+from src.machine_learning.components.inference.stable_predictor import StablePredictor
 
 
 def main():
@@ -17,7 +17,7 @@ def main():
     cap = cv2.VideoCapture(0)
     runner = InferenceRunner(
         model_path="generated_files/model.joblib",
-        testing_images_path="./shapes/testing"
+        testing_images_path="./shapes/testing",
     )
 
     stable = StablePredictor(window=12)
@@ -33,16 +33,18 @@ def main():
 
         processed = pipeline.process(frame)
 
-        contours, _ = cv2.findContours(processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(
+            processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE
+        )
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 1000 < area < 100000:  # Ajusta este valor según la resolución de tu cámara
-
+            if (
+                1000 < area < 100000
+            ):  # Ajusta este valor según la resolución de tu cámara
                 cv2.drawContours(frame, [cnt], -1, (0, 255, 255), 2)
 
-
-                label = runner.predict_from_contour(cnt) # realizar prediccion
+                label = runner.predict_from_contour(cnt)  # realizar prediccion
 
                 # logica para encontrar en el centro de la silueta la etiqueta que lo representa
                 M = cv2.moments(cnt)
@@ -53,8 +55,15 @@ def main():
                     cx, cy = 0, 0
 
                 # dibujar la etiqueta cerca del centro de la figura
-                cv2.putText(frame, label, (cx - 20, cy - 20),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+                cv2.putText(
+                    frame,
+                    label,
+                    (cx - 20, cy - 20),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (0, 255, 0),
+                    2,
+                )
 
         cv2.imshow("Camera", frame)
         cv2.imshow("Processed", processed)
@@ -68,3 +77,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

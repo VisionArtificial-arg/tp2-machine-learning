@@ -3,8 +3,8 @@ import numpy as np
 from sklearn import tree
 from joblib import dump
 
-from utils.label_converters import label_to_int
-from utils.path_helper import project_root
+from src.machine_learning.utils.label_converters import label_to_int
+from src.machine_learning.utils.path_helper import project_root
 
 
 class DecisionTreeTrainer:
@@ -13,15 +13,14 @@ class DecisionTreeTrainer:
         self.dataset_path = root / dataset_path
         self.model_output_path = root / model_output_path
 
-
     def load_dataset(self):
         X = []
         Y = []
 
         with open(self.dataset_path) as csv_file:
-            reader = csv.reader(csv_file, delimiter=',')
+            reader = csv.reader(csv_file, delimiter=",")
             for row in reader:
-                label = row.pop()          # último valor
+                label = row.pop()  # último valor
                 values = [float(x) for x in row]
                 X.append(values)
                 Y.append(label_to_int(label))
@@ -37,9 +36,7 @@ class DecisionTreeTrainer:
         print("dataset_path =", self.dataset_path)
 
         model = tree.DecisionTreeClassifier(
-            criterion="gini",
-            max_depth=10,
-            random_state=42
+            criterion="gini", max_depth=10, random_state=42
         )
 
         model.fit(X, Y)
@@ -48,3 +45,4 @@ class DecisionTreeTrainer:
     def save(self, model):
         dump(model, self.model_output_path)
         print(f"Modelo guardado en {self.model_output_path}")
+

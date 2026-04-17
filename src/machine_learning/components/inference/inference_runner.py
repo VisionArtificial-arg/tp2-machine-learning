@@ -5,10 +5,14 @@ import numpy as np
 import glob
 from joblib import load
 
-from utils.hu_moments_generation import hu_moments_of_file, hu_moments_of_frame, compute_hu_moments
-from utils.label_converters import int_to_label
-from utils.path_helper import project_root
-from utils.scale_hu_moments import scale_hu_moments
+from src.machine_learning.utils.hu_moments_generation import (
+    hu_moments_of_file,
+    hu_moments_of_frame,
+    compute_hu_moments,
+)
+from src.machine_learning.utils.label_converters import int_to_label
+from src.machine_learning.utils.path_helper import project_root
+from src.machine_learning.utils.scale_hu_moments import scale_hu_moments
 
 
 class InferenceRunner:
@@ -29,7 +33,6 @@ class InferenceRunner:
             return None  # si no encuentra contornos
         return self.predict_from_hu(hu)
 
-
     def predict_from_contour(self, contour):
         moments = cv2.moments(contour)
 
@@ -39,21 +42,19 @@ class InferenceRunner:
 
         sample = np.array([hu_scaled.flatten()], dtype=np.float32)
 
-
         prediction = self.model.predict(sample)[0]
         return int_to_label(prediction)
-
 
     def run(self):
         files = glob.glob(f"{self.testing_images_path}/*")
 
         for f in files:
-            hu = hu_moments_of_file(f) # generates descriptors from image
+            hu = hu_moments_of_file(f)  # generates descriptors from image
 
             # sklearn expect shape = (1, 7)
             sample = np.array([hu.flatten()], dtype=np.float32)
 
-            prediction = self.model.predict(sample)[0] # prediction
+            prediction = self.model.predict(sample)[0]  # prediction
 
             # read image + draw prediction
             image = cv2.imread(f)
@@ -67,7 +68,7 @@ class InferenceRunner:
                 1,
                 (255, 0, 0),
                 2,
-                cv2.LINE_AA
+                cv2.LINE_AA,
             )
 
             cv2.imshow("Result", annotated)
@@ -75,5 +76,3 @@ class InferenceRunner:
             cv2.waitKey(0)
 
         cv2.destroyAllWindows()
-
-
