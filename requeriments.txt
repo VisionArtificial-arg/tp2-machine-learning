@@ -1,7 +1,5 @@
 absl-py==2.4.0
 attrs==25.4.0
--e git+ssh://git@github.com/VisionArtificial-arg/basic-image-processor.git@492cc5dc9db34cdb82a32547d13695f14968284e#egg=basic_image_processor
-binary-counter @ file:///home/faculty/VisionArtificial/tp1-binary-counter
 cffi==2.0.0
 contourpy==1.3.3
 cycler==0.12.1
