@@ -5,9 +5,10 @@ import numpy as np
 import glob
 from joblib import load
 
-from utils.hu_moments_generation import hu_moments_of_file, hu_moments_of_frame
+from utils.hu_moments_generation import hu_moments_of_file, hu_moments_of_frame, compute_hu_moments
 from utils.label_converters import int_to_label
 from utils.path_helper import project_root
+from utils.scale_hu_moments import scale_hu_moments
 
 
 class InferenceRunner:
@@ -28,16 +29,16 @@ class InferenceRunner:
             return None  # si no encuentra contornos
         return self.predict_from_hu(hu)
 
+
     def predict_from_contour(self, contour):
         moments = cv2.moments(contour)
 
         hu_moments = cv2.HuMoments(moments)
 
-        # IMPORTANTE: Dependiendo de cómo generaste el dataset, podrías necesitar
-        # aplicar una transformación logarítmica aquí para estabilizar los valores.
-        # Si no lo hiciste en el generador, déjalo así.
+        hu_scaled = scale_hu_moments(hu_moments)
 
-        sample = np.array([hu_moments.flatten()], dtype=np.float32)
+        sample = np.array([hu_scaled.flatten()], dtype=np.float32)
+
 
         prediction = self.model.predict(sample)[0]
         return int_to_label(prediction)
