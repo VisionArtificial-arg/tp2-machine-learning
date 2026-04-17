@@ -37,7 +37,7 @@ def main():
 
         for cnt in contours:
             area = cv2.contourArea(cnt)
-            if 1000 < area < 100000:  # Ajusta este valor según la resolución de tu cámara
+            if 1000 < area < 100000:
 
                 cv2.drawContours(frame, [cnt], -1, (0, 255, 255), 2)
 

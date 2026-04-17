@@ -4,26 +4,37 @@ from cv2 import Mat
 
 from basic_image_processor.components.image_converter.grayscale_conversion import GrayScaleConverter
 from basic_image_processor.components.morphological_transformers import Erosion
-from basic_image_processor.components.threshold import AdaptiveGaussThreshold
+from basic_image_processor.components.threshold import AdaptiveGaussThreshold, ManualThreshold
+
 
 def compute_hu_moments(image):
     gray = GrayScaleConverter().apply(image)
-    binary = AdaptiveGaussThreshold().apply(gray)
+    # binary = AdaptiveGaussThreshold().apply(gray)
+    binary = ManualThreshold().apply(gray, 127, 255, cv2.THRESH_BINARY)
     binary = 255 - binary
+
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     binary = Erosion().apply(binary, kernel=kernel, iterations=1)
+
+    # cv2.imshow("Binary", binary)
+    # cv2.waitKey(0)
 
     # contornos
     contours, _ = cv2.findContours(binary, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     if len(contours) == 0:
         return None
 
+    # image = cv2.drawContours(image, contours, -1, (0, 0, 255), 3)
+    # cv2.imshow("Processed", image)
+    # cv2.waitKey(0)
+
     contour = max(contours, key=cv2.contourArea)
 
     # momentos
     m = cv2.moments(contour)
     hu = cv2.HuMoments(m)
+
 
     # evitar log(0)
     eps = 1e-12
