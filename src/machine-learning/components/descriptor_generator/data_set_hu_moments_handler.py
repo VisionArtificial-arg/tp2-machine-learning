@@ -1,5 +1,4 @@
 import csv
-import glob
 import numpy as np
 from utils.hu_moments_generation import hu_moments_of_file
 from utils.path_helper import project_root

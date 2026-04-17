@@ -28,6 +28,19 @@ class InferenceRunner:
             return None  # si no encuentra contornos
         return self.predict_from_hu(hu)
 
+    def predict_from_contour(self, contour):
+        moments = cv2.moments(contour)
+
+        hu_moments = cv2.HuMoments(moments)
+
+        # IMPORTANTE: Dependiendo de cómo generaste el dataset, podrías necesitar
+        # aplicar una transformación logarítmica aquí para estabilizar los valores.
+        # Si no lo hiciste en el generador, déjalo así.
+
+        sample = np.array([hu_moments.flatten()], dtype=np.float32)
+
+        prediction = self.model.predict(sample)[0]
+        return int_to_label(prediction)
 
 
     def run(self):
