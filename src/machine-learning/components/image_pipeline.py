@@ -8,7 +8,7 @@ from basic_image_processor.components.threshold import ManualThreshold, Adaptive
 
 class ImageProcessingPipeline:
     def __init__(self):
-        self.threshold_type = "adaptive"
+        self.threshold_type = "manual"
         self.manual_value = 127
         self.block_size = 11
         self.C = 2
@@ -19,14 +19,15 @@ class ImageProcessingPipeline:
         gray = GrayScaleConverter().apply(frame)
 
         # Selección dinámica de threshold
-        if self.threshold_type == "manual":
-            binary = ManualThreshold().apply(gray, self.manual_value, 255, cv2.THRESH_BINARY)
+        # if self.threshold_type == "manual":
 
-        elif self.threshold_type == "adaptive":
-            binary = AdaptiveGaussThreshold().apply(gray)
+        binary = ManualThreshold().apply(gray, self.manual_value, 255, cv2.THRESH_BINARY)
 
-        elif self.threshold_type == "otsu":
-            binary = AutomaticThreshold().apply(gray)
+        # elif self.threshold_type == "adaptive":
+            # binary = AdaptiveGaussThreshold().apply(gray)
+
+        # elif self.threshold_type == "otsu":
+            # binary = AutomaticThreshold().apply(gray)
 
         # Morph (ajustable)
         kernel = np.ones((self.kernel_size, self.kernel_size), np.uint8)
